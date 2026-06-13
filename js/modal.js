@@ -1,4 +1,3 @@
-// modal.js - Person 2
 
 
 function Modal(prod) {
@@ -23,7 +22,7 @@ function Modal(prod) {
                     <input type="text" id="cantidad-producto" class="form-control form-control-sm text-center fw-bold fs-5 mx-2" value="1" readonly style="width: 40px; border: none; background: transparent;">
                     <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-sumar">+</button>
                 </div>
-    
+                
                 <div class="fw-bold">
                     Precio: <span class="text-primary ms-1"> USD ${prod.price.toFixed(2)}</span>
                 </div>
@@ -41,30 +40,74 @@ function Modal(prod) {
 
     container.innerHTML = template;
 
-    
+
+
     const btnRestar = container.querySelector('#btn-restar');
     const btnSumar = container.querySelector('#btn-sumar');
     const txtCantidad = container.querySelector('#cantidad-producto');
-    const btnAgregar = container.querySelector('#add-to-cart-btn');
+    const btnAgregar = container.querySelector('#add-to-cart-btn');    
 
     let cantidad = 1;
+
+
+    const bootstrapModal = new bootstrap.Modal(container);
+
+
 
     btnSumar.addEventListener('click', () => {
         cantidad++;
         txtCantidad.value = cantidad;
-        btnAgregar.dataset.cantidad = cantidad; 
+        btnAgregar.dataset.cantidad = cantidad;
     });
 
     btnRestar.addEventListener('click', () => {
-        if (cantidad > 1) { 
+        if (cantidad > 1) {
             cantidad--;
             txtCantidad.value = cantidad;
             btnAgregar.dataset.cantidad = cantidad;
         }
     });
 
+    btnAgregar.addEventListener('click', () => {
+        
+        const productoParaCarrito = {
+            id: prod.id,
+            title: prod.title,
+            price: prod.price,
+            image: prod.image,
+            cantidad: cantidad
+        };
+
+        
+        let carritoActual = JSON.parse(localStorage.getItem('carrito')) || [];
+
+        
+        const existe = carritoActual.find(item => item.id === prod.id);
+
+        if (existe) {
+            existe.cantidad += cantidad;
+        } else {
+            carritoActual.push(productoParaCarrito);
+        }
+
+        
+        localStorage.setItem('carrito', JSON.stringify(carritoActual));
+
+        
+        bootstrapModal.hide();
+
+        
+        Swal.fire({
+            title: '¡Producto agregado!',
+            text: `Se agregaron ${cantidad} unidad(es) de "${prod.title}" al carrito.`,
+            icon: 'success',
+            confirmButtonColor: '#0d6efd'
+        });
+    });
+
+
     
-    const bootstrapModal = new bootstrap.Modal(container);
+    
     bootstrapModal.show();
 }
 

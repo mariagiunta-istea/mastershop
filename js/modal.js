@@ -30,7 +30,7 @@ function Modal(prod) {
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="add-to-cart-btn" data-cantidad="1">
+                <button type="button" class="btn btn-primary" id="add-to-cart-btn-${prod.id}" data-cantidad="1">
                     Agregar al carrito
                 </button>
             </div>
@@ -38,16 +38,17 @@ function Modal(prod) {
     </div>
     `;
 
-    container.innerHTML = template;
+    container.innerHTML = template;   
 
 
 
     const btnRestar = container.querySelector('#btn-restar');
     const btnSumar = container.querySelector('#btn-sumar');
     const txtCantidad = container.querySelector('#cantidad-producto');
-    const btnAgregar = container.querySelector('#add-to-cart-btn');    
+    // se identifica al boton de agregar con el id del producto seleccionado para llevarlo al carrito
+    const btnAgregar = container.querySelector(`#add-to-cart-btn-${prod.id}`);    
 
-    let cantidad = 1;
+    let cantidad = 1;      
 
 
     const bootstrapModal = new bootstrap.Modal(container);
@@ -68,7 +69,9 @@ function Modal(prod) {
         }
     });
 
-    btnAgregar.addEventListener('click', () => {
+
+
+    btnAgregar.addEventListener('click', () => {    
         
         const productoParaCarrito = {
             id: prod.id,
@@ -95,6 +98,9 @@ function Modal(prod) {
 
         
         bootstrapModal.hide();
+        
+     // se vuelve a renderizar el carrito luego de agregar uno o varios productos  
+        renderCart();
 
         
         Swal.fire({
@@ -118,6 +124,10 @@ document.getElementById('products-container').addEventListener('click', (e) => {
 
     const idDelProducto = tarjeta.dataset.id;
     const productoEncontrado = allProducts.find(p => p.id === Number(idDelProducto));
+
+
+
+
 
     if (productoEncontrado) {
         Modal(productoEncontrado);

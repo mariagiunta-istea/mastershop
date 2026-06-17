@@ -31,12 +31,12 @@ function Modal(prod) {
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="add-to-cart-btn-${prod.id}" data-cantidad="1">
-                    Agregar al carrito
+                    Cargar al carrito
                 </button>
             </div>
         </div>
     </div>
-    `;
+    `;   
 
     container.innerHTML = template;   
 
@@ -48,11 +48,19 @@ function Modal(prod) {
     // se identifica al boton de agregar con el id del producto seleccionado para llevarlo al carrito
     const btnAgregar = container.querySelector(`#add-to-cart-btn-${prod.id}`);    
 
-    let cantidad = 1;      
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    
+    let cantidad = 1;
+    
+    const indice =  carrito.findIndex( p => p.id === prod.id )
 
+    if (indice !== -1)
+        { cantidad = carrito[indice].cantidad; }   
+    
+    
+    txtCantidad.value = cantidad;
 
     const bootstrapModal = new bootstrap.Modal(container);
-
 
 
     btnSumar.addEventListener('click', () => {
@@ -88,7 +96,7 @@ function Modal(prod) {
         const existe = carritoActual.find(item => item.id === prod.id);
 
         if (existe) {
-            existe.cantidad += cantidad;
+            existe.cantidad = cantidad;
         } else {
             carritoActual.push(productoParaCarrito);
         }
@@ -104,17 +112,17 @@ function Modal(prod) {
 
         
         Swal.fire({
-            title: '¡Producto agregado!',
-            text: `Se agregaron ${cantidad} unidad(es) de "${prod.title}" al carrito.`,
+            title: '¡Carrito actualizado!',
+            text: `El carrito ahora tiene ${cantidad} unidad(es) de "${prod.title}".`,//`Se agregaron ${cantidad} unidad(es) de "${prod.title}" al carrito.`,
             icon: 'success',
             confirmButtonColor: '#0d6efd'
         });
     });
 
 
-    
-    
+        
     bootstrapModal.show();
+
 }
 
 
@@ -124,8 +132,6 @@ document.getElementById('products-container').addEventListener('click', (e) => {
 
     const idDelProducto = tarjeta.dataset.id;
     const productoEncontrado = allProducts.find(p => p.id === Number(idDelProducto));
-
-
 
 
 

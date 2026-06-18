@@ -93,3 +93,27 @@ function formatCategoryLabel(text) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+// ===== Deshabilita las acciones del carrito cuando está vacío =====
+function toggleCartActionButtons() {
+  const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+  const isEmpty = carrito.length === 0;
+ 
+  [checkoutBtn, clearCartBtn].forEach((btn) => {
+    if (!btn) return;
+    btn.disabled = isEmpty;
+    btn.classList.toggle('disabled', isEmpty);
+  });
+}
+ 
+// cart.js vuelve a renderizar #cart-items-list cada vez que el carrito
+// cambia (agregar, quitar, vaciar, finalizar compra). Observamos esos
+// cambios en el DOM para saber cuándo el carrito queda vacío, sin
+// necesidad de modificar el código de cart.js.
+if (cartItemsListEl) {
+  const cartObserver = new MutationObserver(toggleCartActionButtons);
+  cartObserver.observe(cartItemsListEl, { childList: true });
+}
+ 
+// ===== Inicialización =====
+loadCategories();
+toggleCartActionButtons();

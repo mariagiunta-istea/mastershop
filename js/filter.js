@@ -41,3 +41,55 @@ if (searchInput) {
     applyFilters();
   });
 }
+// ===== Navegación por categorías =====
+async function loadCategories() {
+  if (!categoryNav) return;
+ 
+  try {
+    const categories = await fetchCategories();
+ 
+    categoryNav.appendChild(createCategoryButton('Todas', 'all'));
+ 
+    categories.forEach((category) => {
+      categoryNav.appendChild(
+        createCategoryButton(formatCategoryLabel(category), category)
+      );
+    });
+  } catch (error) {
+    console.error('No se pudieron cargar las categorías:', error);
+  }
+}
+ 
+function createCategoryButton(label, value) {
+  const li = document.createElement('li');
+  li.className = 'nav-item';
+ 
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className =
+    'nav-link btn category-btn' + (value === currentCategory ? ' active' : '');
+  btn.textContent = label;
+  btn.dataset.category = value;
+ 
+  btn.addEventListener('click', () => {
+    currentCategory = value;
+    setActiveCategoryButton(value);
+    applyFilters();
+  });
+ 
+  li.appendChild(btn);
+  return li;
+}
+ 
+function setActiveCategoryButton(value) {
+  categoryNav.querySelectorAll('.category-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.category === value);
+  });
+}
+ 
+function formatCategoryLabel(text) {
+  return text
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}

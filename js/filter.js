@@ -25,9 +25,18 @@ function applyFilters() {
     filtered = filtered.filter((p) => p.category === currentCategory);
   }
  
-  if (currentSearchTerm.trim() !== '') {
+  /*if (currentSearchTerm.trim() !== '') {
     filtered = filtered.filter((p) =>
       p.title.toLowerCase().includes(currentSearchTerm)
+    );
+  }*/
+
+  // Corrección: ahora usa startsWith(), devolviendo solo los productos
+  // cuyo título COMIENZA con el texto buscado, dando una búsqueda más limpia.
+  const searchTerm = currentSearchTerm.trim().toLowerCase();
+  if (searchTerm !== '') {
+    filtered = filtered.filter((p) =>
+      p.title.toLowerCase().startsWith(searchTerm)
     );
   }
  

@@ -6,7 +6,7 @@ const cartItemsList = document.getElementById('cart-items-list');
 const cartBadge = document.getElementById('cart-badge');
 
 // obtengo referencia en el index.html del botón Elimina todos del carrito
-const btnDeleteAll= document.getElementById('clear-cart-btn');
+const btnDeleteAll = document.getElementById('clear-cart-btn');
 
 // obtengo referencia en el index.html del campo qu emuestra el monto total de la compra
 const cartTotal = document.getElementById('cart-total');
@@ -38,7 +38,24 @@ function renderCart() {
                     <div class="col-8">
                         <div class="card-body">
                             <h6 class="card-title">${item.title}</h6>
-                            <p class="card-text mb-1">Cantidad: ${item.cantidad}</p>
+                                                    
+                            <div class="d-flex align-items-center gap-2 mb-1">
+
+                                <span class="card-text">Cantidad:</span>
+
+                                <button class="btn btn-outline-secondary btn-sm" id="btnRestar-item-${item.id}">
+                                    -
+                                </button>
+
+                                <span class="fw-bold">${item.cantidad}</span>
+
+                                <button class="btn btn-outline-secondary btn-sm" id="btnSumar-item-${item.id}">
+                                    +
+                                </button>
+
+                            </div>
+
+
                             <small class="text-body-secondary">Precio: $${item.price}</small>
                         </div>
                     </div>
@@ -56,15 +73,23 @@ function renderCart() {
     // se aloja el carrito renderizado en la sección correspondiente del index.html
     cartItemsList.innerHTML = template;
 
-    
+
     // ejecuto funcion que asigna boton de eliminacion individualizado a cada uno de los productos del carrito
     addDeleteEvents(carrito);
 
-    
+
+    // ejecuto funcion que asigna boton de sumar una unidad a la cantidad de producto, a cada uno de los productos del carrito.
+    addBtnSumarItemEvents(carrito);
+
+
+    // ejecuto funcion que asigna boton de restar una unidad a la cantidad de producto, a cada uno de los productos del carrito.
+    addBtnRestarItemEvents(carrito);
+
+
     // ejecuto funcion que actualiza el indicador de cantidad productos en boton de carrito
     updateCartBadge();
 
-   
+
     // ejecuto funcion que calcula importe total de compra mostrado al final del carrito
     cartTotal.textContent = `$${calcularTotal(carrito).toFixed(2)}`;
 
@@ -82,6 +107,7 @@ function deleteCartItem(idProducto) {
     const carritoActualizado = carrito.filter((item) => item.id !== idProducto);
 
     localStorage.setItem('carrito', JSON.stringify(carritoActualizado));
+    
 }
 
 
@@ -113,8 +139,8 @@ function updateCartBadge() {
     });
 
     cartBadge.textContent = cantidadTotal;
-    
- // si la cantidad total es cero invisibilizo el badge indicador de cantidad del boton del carrito
+
+    // si la cantidad total es cero invisibilizo el badge indicador de cantidad del boton del carrito
     if (cantidadTotal > 0) {
         cartBadge.classList.remove('d-none');
     } else {
@@ -125,7 +151,46 @@ function updateCartBadge() {
 
 
 
-// esta funcion da funcionalidad al boton Eliminar todos del carrito. Vacia el carrito y el localStorage.
+
+function addBtnSumarItemEvents(carrito) {
+
+    carrito.forEach((item) => {
+
+        const btnSumarItem = document.getElementById(`btnSumar-item-${item.id}`);
+
+        if (!btnSumarItem) return;
+
+        btnSumarItem.addEventListener('click', () => {
+            item.cantidad++;
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            renderCart();
+        });
+    });
+}
+
+
+
+
+function addBtnRestarItemEvents(carrito) {
+
+    carrito.forEach((item) => {
+
+        const btnRestarItem = document.getElementById(`btnRestar-item-${item.id}`);
+
+        if (!btnRestarItem) return;
+
+        btnRestarItem.addEventListener('click', () => {
+            item.cantidad--;
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            renderCart();
+        });
+    });
+}
+
+
+
+
+    // esta funcion da funcionalidad al boton Eliminar todos del carrito. Vacia el carrito y el localStorage.
 function btnEliminaTodo() {
 
     btnDeleteAll.addEventListener('click', () => {
@@ -146,13 +211,13 @@ function btnEliminaTodo() {
 
                 const carrito = [];
 
-                localStorage.setItem('carrito', JSON.stringify(carrito));  
+                localStorage.setItem('carrito', JSON.stringify(carrito));
 
                 renderCart();
 
                 Swal.fire({
                     title: 'Carrito vacío',
-                    text: 'Todos los productos fueron eliminados.',     
+                    text: 'Todos los productos fueron eliminados.',
                     icon: 'success',
                     confirmButtonColor: '#0d6efd'
                 });
@@ -163,18 +228,20 @@ function btnEliminaTodo() {
 }
 
 
-// esta funcion calcula el importe total de la compra hasta el momento
+
+    // esta funcion calcula el importe total de la compra hasta el momento
 function calcularTotal(carrito) {
 
-     return carrito.reduce((acc, item) => acc + item.price * item.cantidad, 0);
+    return carrito.reduce((acc, item) => acc + item.price * item.cantidad, 0);
 
 }
 
 
-// aqui se da funcionalidad al boton de finalizar compra del carrito. Al pulsarlo muestra cantidad de productos e importe total, y pide confirmacion de compra
+
+    // aqui se da funcionalidad al boton de finalizar compra del carrito. Al pulsarlo muestra cantidad de productos e importe total, y pide confirmacion de compra
 function btnFinalizarCompra() {
 
-        btnCheckout.addEventListener('click', () => {
+    btnCheckout.addEventListener('click', () => {
         const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
         if (carrito.length === 0) {
@@ -199,10 +266,10 @@ function btnFinalizarCompra() {
             cancelButtonText: 'Cancelar',
             confirmButtonColor: '#198754',
             cancelButtonColor: '#6c757d'
-        }).then((result) => {     
+        }).then((result) => {
 
             if (result.isConfirmed) {
-                localStorage.setItem('carrito', JSON.stringify([]));
+                localStorage.setItem('carrito', JSON.stringify([]));    
                 renderCart();
 
                 Swal.fire({
@@ -218,13 +285,13 @@ function btnFinalizarCompra() {
 }
 
 
-// ejecuto la funcion que da funcionalidad al boton de eliminar todo del carrito
+    // ejecuto la funcion que da funcionalidad al boton de eliminar todo del carrito
 btnEliminaTodo();
 
-// ejecuto la funcion que da funcionalidad al boton de finalizar compra del carrito
+    // ejecuto la funcion que da funcionalidad al boton de finalizar compra del carrito
 btnFinalizarCompra();
 
-// ejecuto la funcion que renderiza el carrito con el array de productos obtenido del localStorage
+    // ejecuto la funcion que renderiza el carrito con el array de productos obtenido del localStorage
 renderCart();
 
 

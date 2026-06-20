@@ -8,12 +8,12 @@ const categoryNav = document.getElementById('category-nav');
 const checkoutBtn = document.getElementById('checkout-btn');
 const clearCartBtn = document.getElementById('clear-cart-btn');
 const cartItemsListEl = document.getElementById('cart-items-list');
-
+const sortSelect = document.getElementById('sort-select');
 
 // ===== Estado de los filtros =====
 let currentCategory = 'all';
 let currentSearchTerm = '';
-
+let currentSort = '';   // selector filtro ordenamiento por precio
 
 // Filtra el array global "allProducts" (definido en products.js) según
 // la categoría seleccionada y el texto buscado, y vuelve a renderizar
@@ -21,9 +21,8 @@ let currentSearchTerm = '';
 function applyFilters() {
   if (typeof allProducts === 'undefined' || allProducts.length === 0) return;
 
- 
-  let filtered = allProducts; 
-
+  // let filtered = allProducts;
+  let filtered = [...allProducts];  // creo nuevo array copia para ordenar por precio sin alterar el orden del array original
 
   if (currentCategory !== 'all') {
     filtered = filtered.filter((p) => p.category === currentCategory);
@@ -45,6 +44,15 @@ function applyFilters() {
   }
 
 
+  // Filtro de ordenamiento por precio (ascendente y descendente)
+
+  if (currentSort === 'price-asc') {
+    filtered = filtered.sort((a, b) => a.price - b.price);
+  }
+
+  if (currentSort === 'price-desc') {
+    filtered = filtered.sort((a, b) => b.price - a.price);
+  }
 
 
   renderProducts(filtered);
@@ -58,7 +66,16 @@ if (searchInput) {
   });
 }
 
- 
+// se detecta el evento de cambio de seleccion en filtro ordenador por precio   
+
+if (sortSelect) {
+  sortSelect.addEventListener('change', (e) => {
+    currentSort = e.target.value;
+    applyFilters();
+  });
+}      
+
+
 
 // ===== Navegación por categorías =====
 async function loadCategories() {
@@ -79,9 +96,8 @@ async function loadCategories() {
   }
 }
 
-
 function createCategoryButton(label, value) {
-  const li = document.createElement('li');   
+  const li = document.createElement('li');
   li.className = 'nav-item';
 
   const btn = document.createElement('button');
@@ -96,6 +112,9 @@ function createCategoryButton(label, value) {
 
     currentSort = '';   // se resetea el filtro de ordenamiento por precio al seleccionar una categoria
 
+  if (sortSelect) {
+    sortSelect.value = '';
+  }
 
     setActiveCategoryButton(value);
     applyFilters();

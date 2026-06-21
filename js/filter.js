@@ -29,7 +29,7 @@
     const searchTerm = currentSearchTerm.trim().toLowerCase();
     if (searchTerm !== '') {
       filtered = filtered.filter((p) =>
-        p.title.toLowerCase().startsWith(searchTerm)
+        p.title.toLowerCase().includes(searchTerm)
       );
     }
 

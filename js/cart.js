@@ -169,8 +169,7 @@
 
           Swal.fire({
               title: '¿Finalizar compra?',
-              text: `Usted está por adquirir ${cantidadTotal} producto(s) por un importe total de
-  $${calcularTotal(carrito).toFixed(2)}.`,
+              text: `Usted está por adquirir ${cantidadTotal} producto(s) por un importe total de $${calcularTotal(carrito).toFixed(2)}.`,
               icon: 'question',
               showCancelButton: true,
               confirmButtonText: 'Confirmar compra',

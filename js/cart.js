@@ -3,6 +3,7 @@
   // referencias del DOM
   const cartItemsList = document.getElementById('cart-items-list');
   const cartBadge = document.getElementById('cart-badge');
+  const cartBadgeMobile = document.getElementById('cart-badge-mobile');
   const btnDeleteAll = document.getElementById('clear-cart-btn');
   const cartTotal = document.getElementById('cart-total');
   const btnCheckout = document.getElementById('checkout-btn');
@@ -81,12 +82,12 @@
       const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
       let cantidadTotal = 0;
       carrito.forEach((item) => { cantidadTotal += item.cantidad; });
-      cartBadge.textContent = cantidadTotal;
-      if (cantidadTotal > 0) {
-          cartBadge.classList.remove('d-none');
-      } else {
-          cartBadge.classList.add('d-none');
-      }
+
+      [cartBadge, cartBadgeMobile].forEach((badge) => {
+          if (!badge) return;
+          badge.textContent = cantidadTotal;
+          badge.classList.toggle('d-none', cantidadTotal === 0);
+      });
   }
 
   // asigna botón de sumar unidad a cada producto del carrito
@@ -168,8 +169,7 @@
 
           Swal.fire({
               title: '¿Finalizar compra?',
-              text: `Usted está por adquirir ${cantidadTotal} producto(s) por un importe total de
-  $${calcularTotal(carrito).toFixed(2)}.`,
+              text: `Usted está por adquirir ${cantidadTotal} producto(s) por un importe total de $${calcularTotal(carrito).toFixed(2)}.`,
               icon: 'question',
               showCancelButton: true,
               confirmButtonText: 'Confirmar compra',
@@ -190,3 +190,4 @@
           });
       });
   }
+

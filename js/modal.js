@@ -73,7 +73,7 @@
       });
 
       btnAgregar.addEventListener('click', () => {
-          const productoParaCarrito = {
+          const productoParaCarrito = {                            
               id: prod.id,
               title: prod.title,                                                                            
               price: prod.price,
@@ -81,16 +81,15 @@
               cantidad: cantidad                                                                          
           };
 
-          let carritoActual = JSON.parse(localStorage.getItem('carrito')) || [];
-          const existe = carritoActual.find(item => item.id === prod.id);
+          const existe = carrito.find(item => item.id === prod.id);
                                                                                                            
           if (existe) {
               existe.cantidad = cantidad;                                                                  
           } else {                                                                                        
-              carritoActual.push(productoParaCarrito);
+              carrito.push(productoParaCarrito);
           }
 
-          localStorage.setItem('carrito', JSON.stringify(carritoActual));                                  
+          localStorage.setItem('carrito', JSON.stringify(carrito));                                 
           bootstrapModal.hide();
           renderCart();                                                                                    
                                                                                                          
